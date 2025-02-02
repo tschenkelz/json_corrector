@@ -77,7 +77,7 @@ def fix_quotes(almost_json: str) -> str:
     :returns: fixed json data
     """
     regex_fix_quotes = r'([^\w"]+(?:".*"[^\w"]+(?:True|true|False|false)[^\w"]+)?(?:"[^"]*"[^\w"]*)+)([^"\W]+)?'
-    regex_fix_quotes_repl = r'\1"\2'
+    regex_fix_quotes_repl = r'\1"\2"'
 
 
     #print(re.findall(regex_fix_quotes,almost_json))
@@ -86,16 +86,10 @@ def fix_quotes(almost_json: str) -> str:
 
 def main():
     almost_json = process_input()
-    #print(almost_json)
-    hi = {"test": "nr1", "test2": "nr2"}
     
+    fixed_bools = fix_bools(almost_json)
+    fixed_quotes = fix_quotes(fixed_bools)
 
-    #fixed_bools = fix_bools(almost_json)
-    #print(hi)
-    fixed_quotes = fix_quotes(almost_json)
-
-    print(fixed_quotes)
-    #quit()
     loaded = json.loads(fixed_quotes)
     print(json.dumps(loaded))
  
