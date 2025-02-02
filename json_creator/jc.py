@@ -5,7 +5,7 @@ Fixes data that is almost json but not enterily. This issues are fixed:
 
 Compliant json gets printed.
 """
-
+import sys
 import re
 
 
@@ -19,14 +19,8 @@ class MultipleArgumentError(Exception):
     pass
 
 
-def transform_json(almost_json: str) -> str:
-    #regex = r'([^\w"]+(?:"[^"]*"[^\w"]*)*)([^"\W]+)'
-    regex = r'([^\w"]+(?:"[^"]*"[^\w"]*)*)(?:True|true|False|false)?([^"\W]+)?'
-    repl = r'\1"\2"'
-
-    return re.sub(regex,repl,almost_json)
-
-def main():
+def process_input() -> str:
+    """Gets and return str passed in either via positional or stdin."""
     parser = argparse.ArgumentParser(description=("Fixes data that is almost json"
                                                   " but not enterily."),
                                                   epilog="Compliant json gets printed.")
@@ -41,18 +35,69 @@ def main():
                                             " E.g. double quotes instead of single quotes"),
                                             nargs='*')
     args = parser.parse_args()
-    almost_json = args.almost_json
 
-    # fail if on powershell 5 and prior
-    if len(almost_json) > 1:
+
+    if len(args.almost_json) == 0:
+        # Check if stdin is NOT connected to tty/terminal.
+        if not sys.stdin.isatty():
+            return sys.stdin.read().strip()
+        else:
+            parser.error("No 'almost_json' provided. Provide 'almost_json' as an argument or via stdin.")
+        
+    elif len(args.almost_json) == 1:
+        return args.almost_json[1]
+    else:
         raise MultipleArgumentError(("Multiple Arguments detected. This could be due to"
                                      " PowerShell version 5 or prior."
                                      " Use PowerShell core instead."))
 
-    
-    compliant_json = transform_json(almost_json[0])
 
-    loaded = json.loads(compliant_json)
+def fix_bools(almost_json: str) -> str:
+    """Fix bools in almost json data.
+    Example input:  '{"bool1": True, "bool2": false, "nobool": "True"}'
+    Example output: '{"bool1": true, "bool2": false, "nobool": "True"}'
+    
+    :returns: fixed json data
+    """
+
+    # from example, this are the matches (ex single quotes):
+    # - '": True'
+    # - '": false'
+    regex_fix_bools = r'"[\s]*:[\s]*(True|False|true|false)'
+
+    # and all matches are convert to lowercase
+    return re.sub(regex_fix_bools,lambda match: match.group().lower() ,almost_json)
+
+
+def fix_quotes(almost_json: str) -> str:
+    """Fix quotes in almost json data.
+    Example input:  '{"nr1": "val1", "nr2": val2}'
+    Example output: '{"nr1": "val1", "nr2": "val2"}'
+
+    :returns: fixed json data
+    """
+    regex_fix_quotes = r'([^\w"]+(?:".*"[^\w"]+(?:True|true|False|false)[^\w"]+)?(?:"[^"]*"[^\w"]*)+)([^"\W]+)?'
+    regex_fix_quotes_repl = r'\1"\2'
+
+
+    #print(re.findall(regex_fix_quotes,almost_json))
+    return re.sub(regex_fix_quotes,regex_fix_quotes_repl,almost_json,flags=re.M)
+
+
+def main():
+    almost_json = process_input()
+    #print(almost_json)
+    hi = {"test": "nr1", "test2": "nr2"}
+    
+
+    #fixed_bools = fix_bools(almost_json)
+    #print(hi)
+    fixed_quotes = fix_quotes(almost_json)
+
+    print(fixed_quotes)
+    #quit()
+    loaded = json.loads(fixed_quotes)
     print(json.dumps(loaded))
+ 
 
 main()
