@@ -69,26 +69,26 @@ def fix_bools(almost_json: str) -> str:
     return re.sub(regex_fix_bools,lambda match: match.group().lower() ,almost_json)
 
 
-def fix_quotes(almost_json: str) -> str:
-    """Fix quotes in almost json data.
+def fix_values(almost_json: str) -> str:
+    """Fix missing double quotes for values in almost json data.
     Example input:  '{"nr1": "val1", "nr2": val2}'
     Example output: '{"nr1": "val1", "nr2": "val2"}'
 
     :returns: fixed json data
     """
-    regex_fix_quotes = r'([^\w"]+(?:".*"[^\w"]+(?:True|true|False|false)[^\w"]+)?(?:"[^"]*"[^\w"]*)+)([^"\W]+)?'
-    regex_fix_quotes_repl = r'\1"\2"'
+    regex_fix_quotes = r'(?<=:)\s*((?!true|false)\w[\w\-]*)(?=(?:[^"]*"[^"]*")*[^"]*$)'
+    regex_fix_quotes_repl = r'"\1"'
 
 
-    #print(re.findall(regex_fix_quotes,almost_json))
+    #return re.findall(regex_fix_quotes,almost_json)
     return re.sub(regex_fix_quotes,regex_fix_quotes_repl,almost_json,flags=re.M)
 
 
 def main():
     almost_json = process_input()
-    
+
     fixed_bools = fix_bools(almost_json)
-    fixed_quotes = fix_quotes(fixed_bools)
+    fixed_quotes = fix_values(fixed_bools)
 
     loaded = json.loads(fixed_quotes)
     print(json.dumps(loaded))
