@@ -12,6 +12,7 @@ import re
 import json
 import argparse
 
+
 class MultipleArgumentError(Exception):
     """Raise when multiple Arguments detected but only one is expected
     This could be due to powershell version 5 or prior. Use PowerShell Core instead.
@@ -21,6 +22,8 @@ class MultipleArgumentError(Exception):
 
 def process_input() -> str:
     """Gets and return str passed in either via positional or stdin."""
+
+
     parser = argparse.ArgumentParser(description=("Fixes data that is almost json"
                                                   " but not enterily."),
                                                   epilog="Compliant json gets printed.")
@@ -52,45 +55,64 @@ def process_input() -> str:
                                      " Use PowerShell core instead."))
 
 
+def replace_single_quotes(almost_json: str) -> str:
+    """Replace single quotes with double quotes.
+    Json requires double quotes for keys and vals.
+
+    Example input:  {'bool1': True, 'bool2': false, 'nobool': 'True'}
+    Example output: {"bool1": true, "bool2": false, "nobool": "True"}
+    
+    :returns: data with replaced single quotes
+    """
+
+
+    # and all matches are convert to lowercase
+    return almost_json.replace("'",'"')
+
+
 def fix_bools(almost_json: str) -> str:
     """Fix bools in almost json data.
+    Json allows bool values only lowercase.
+
     Example input:  '{"bool1": True, "bool2": false, "nobool": "True"}'
     Example output: '{"bool1": true, "bool2": false, "nobool": "True"}'
     
-    :returns: fixed json data
+    :returns: data with json-valid bool values
     """
+
 
     # from example, this are the matches (ex single quotes):
     # - '": True'
     # - '": false'
-    regex_fix_bools = r'"[\s]*:[\s]*(True|False|true|false)'
+    regex = r'"[\s]*:[\s]*(True|False|true|false)'
 
     # and all matches are convert to lowercase
-    return re.sub(regex_fix_bools,lambda match: match.group().lower() ,almost_json)
+    return re.sub(regex,lambda match: match.group().lower() ,almost_json)
 
 
-def fix_values(almost_json: str) -> str:
-    """Fix missing double quotes for values in almost json data.
-    Example input:  '{"nr1": "val1", "nr2": val2}'
+def put_missing_double_quotes(almost_json: str) -> str:
+    """Put missing double quotes for keys and values in almost json data.
+    Example input:  '{"nr1": "val1", nr2: val2}'
     Example output: '{"nr1": "val1", "nr2": "val2"}'
 
     :returns: fixed json data
     """
-    regex_fix_quotes = r'(?<=:)\s*((?!true|false)\w[\w\-]*)(?=(?:[^"]*"[^"]*")*[^"]*$)'
-    regex_fix_quotes_repl = r'"\1"'
+    regex= r'(?<=[,{}:])\s*((?!true|false)\w[\w\-]*)(?=(?:[^"]*"[^"]*")*[^"]*$)'
+    repl = r'"\1"'
 
 
     #return re.findall(regex_fix_quotes,almost_json)
-    return re.sub(regex_fix_quotes,regex_fix_quotes_repl,almost_json,flags=re.M)
+    return re.sub(regex,repl,almost_json,flags=re.M)
 
 
 def main():
     almost_json = process_input()
 
-    fixed_bools = fix_bools(almost_json)
-    fixed_quotes = fix_values(fixed_bools)
+    almost_json = replace_single_quotes(almost_json)
+    almost_json = fix_bools(almost_json)
+    almost_json = put_missing_double_quotes(almost_json)
 
-    loaded = json.loads(fixed_quotes)
+    loaded = json.loads(almost_json)
     print(json.dumps(loaded))
  
 
