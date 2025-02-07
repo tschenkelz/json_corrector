@@ -48,7 +48,7 @@ def process_input() -> str:
             parser.error("No 'almost_json' provided. Provide 'almost_json' as an argument or via stdin.")
         
     elif len(args.almost_json) == 1:
-        return args.almost_json[1]
+        return args.almost_json[0]
     else:
         raise MultipleArgumentError(("Multiple Arguments detected. This could be due to"
                                      " PowerShell version 5 or prior."
@@ -109,8 +109,12 @@ def main():
     almost_json = process_input()
 
     almost_json = replace_single_quotes(almost_json)
+    print(f"1\n{almost_json}")
     almost_json = fix_bools(almost_json)
+    print(f"2\n{almost_json}")
     almost_json = put_missing_double_quotes(almost_json)
+    print(f"3\n{almost_json}")
+
 
     loaded = json.loads(almost_json)
     print(json.dumps(loaded))
