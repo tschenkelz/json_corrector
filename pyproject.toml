@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "json_corrector"
-version = "0.0.1"
+version = "3.0.0"
 authors = [
   { name="tschenkelz", email="tschenkelpieper@gmail.com" },
 ]
@@ -15,12 +15,20 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
-license = "MIT"
-license-files = ["LICEN[CS]E*"]
+license = {text = "MIT"}
 
 [project.urls]
-Homepage = "https://github.com/pypa/sampleproject"
-Issues = "https://github.com/pypa/sampleproject/issues"
+Homepage = "https://github.com/tschenkelz/json_corrector"
+Issues = "https://github.com/tschenkelz/json_corrector/issues"
+
+[tool.setuptools.package-data]
+"json_corrector" = ["jc.exe"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.data-files]
+"scripts" = ["json_corrector/jc.exe"]
 
 [project.scripts]
-jc = "json_corrector.jc:main"
+jc = "json_corrector.jc_wrapper:main"

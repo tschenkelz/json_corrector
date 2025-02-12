@@ -48,7 +48,7 @@ def process_input() -> str:
             parser.error("No 'almost_json' provided. Provide 'almost_json' as an argument or via stdin.")
         
     elif len(args.almost_json) == 1:
-        return args.almost_json[1]
+        return args.almost_json[0]
     else:
         raise MultipleArgumentError(("Multiple Arguments detected. This could be due to"
                                      " PowerShell version 5 or prior."
@@ -100,20 +100,19 @@ def put_missing_double_quotes(almost_json: str) -> str:
     regex= r'(?<=[,{}:])\s*((?!true|false)\w[\w\-]*)(?=(?:[^"]*"[^"]*")*[^"]*$)'
     repl = r'"\1"'
 
-
-    #return re.findall(regex_fix_quotes,almost_json)
     return re.sub(regex,repl,almost_json,flags=re.M)
 
 
-def main():
-    almost_json = process_input()
+def main(almost_json: str):
 
     almost_json = replace_single_quotes(almost_json)
     almost_json = fix_bools(almost_json)
     almost_json = put_missing_double_quotes(almost_json)
 
+
     loaded = json.loads(almost_json)
     print(json.dumps(loaded))
  
 
-main()
+if __name__ == "__main__":
+    main(process_input())
