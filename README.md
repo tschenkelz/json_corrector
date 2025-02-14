@@ -19,12 +19,18 @@ echo "{'key1':'val1',key2: val2, 'key3': val3,key4: 'val4', key5: {  'key6': val
 # Build
 **Firstly increase the version in `pyproject.toml`.**
 ## Windows
-*Optional* Cleanup
+Checkout repo
+```pwsh
+git clone https://github.com/tschenkelz/json_corrector.git
+cd json_corrector
+```
+
+*Optional Cleanup*
 ```pwsh
 Remove-Item -Recurse -Force -ErrorAction SilentlyContinue .\dist\*
 ```
 
-*Optional* Specify CA certs
+*Optional Specify CA certs*
 ```pwsh
 $Env:REQUESTS_CA_BUNDLE  = "path\to\ca.pem"
 ```

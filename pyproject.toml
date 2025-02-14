@@ -21,12 +21,6 @@ license = {text = "MIT"}
 Homepage = "https://github.com/tschenkelz/json_corrector"
 Issues = "https://github.com/tschenkelz/json_corrector/issues"
 
-[tool.setuptools.package-data]
-"json_corrector" = ["jc.exe"]
-
-[tool.setuptools]
-include-package-data = true
-
 [tool.setuptools.data-files]
 "scripts" = ["json_corrector/jc.exe"]
 
