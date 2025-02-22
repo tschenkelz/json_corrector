@@ -50,7 +50,10 @@ def process_input() -> str:
     elif len(args.almost_json) == 1:
         return args.almost_json[0]
     else:
-        raise MultipleArgumentError(("Multiple Arguments detected. This could be due to"
+        if "linux" in sys.platform:
+            raise MultipleArgumentError(("Multiple Arguments detected."))
+        if "win" in sys.platform:
+            raise MultipleArgumentError(("Multiple Arguments detected. This could be due to"
                                      " PowerShell version 5 or prior."
                                      " Use PowerShell core instead."))
 

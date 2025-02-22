@@ -1,13 +1,20 @@
-import os
 import subprocess
 import sys
 
 def windows():
-    exe_path = os.path.join(os.path.dirname(__file__), 'jc.exe')
-    subprocess.run([exe_path])
+    if len(sys.argv) > 1: 
+        subprocess.run(["py", "-m", "json_corrector.jc"] + sys.argv[1:])
+    else:
+        subprocess.run(["py", "-m", "json_corrector.jc"])
+    
+    
 
 def linux():
-    subprocess.run(["python3", "-m", "json_corrector.jc"])
+    if len(sys.argv) > 1: 
+        subprocess.run(["python3", "-m", "json_corrector.jc"] + sys.argv[1:])
+    else:
+        subprocess.run(["python3", "-m", "json_corrector.jc"])
+        
 
 def main():
     if "linux" in sys.platform:

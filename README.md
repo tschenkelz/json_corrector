@@ -1,19 +1,28 @@
-# Example Package
+# JSON Corrector
 
-This is a simple example package. You can use
-[GitHub-flavored Markdown](https://guides.github.com/features/mastering-markdown/)
-to write your content.
+Takes data, that is almost in json format, and converts it to json data. <br>
+Thus prepare the data for a json parser.
 
-# Install
+# Requirements
 
-## Windows
-```pwsh
-py -m pip install json-corrector
+* Python 3.x >= 3.8
+
+# Install (Windows & Linux)
+
+```bash
+pip install json-corrector
 ```
 
-# Use
-```pwsh
+# Use (Windows & Linux)
+Using entry point script
+```bash
 echo "{'key1':'val1',key2: val2, 'key3': val3,key4: 'val4', key5: {  'key6': val6  },key7: 'val7: val7,val7'}" | jc
+jc "{'key1':'val1',key2: val2, 'key3': val3,key4: 'val4', key5: {  'key6': val6  },key7: 'val7: val7,val7'}"
+```
+Using runpy
+```bash
+echo "{'key1':'val1',key2: val2, 'key3': val3,key4: 'val4', key5: {  'key6': val6  },key7: 'val7: val7,val7'}" | py -m json_corrector.jc
+py -m json_corrector.jc "{'key1':'val1',key2: val2, 'key3': val3,key4: 'val4', key5: {  'key6': val6  },key7: 'val7: val7,val7'}"
 ```
 
 # Build
