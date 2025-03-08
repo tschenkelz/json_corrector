@@ -3,6 +3,15 @@
 Takes data, that is almost in json format, and converts it to json data. <br>
 Thus prepare the data for a json parser.
 
+# Limitations
+Not all data types that are valid as values, according to [json.org](https://www.json.org/json-en.html), are yet handled correctly.
+* String: :white_check_mark:
+* Boolean: :white_check_mark:
+* Object: :white_check_mark:
+* Array: :white_check_mark:
+* Numbers: :clock430:
+* null: :clock430:
+
 # Requirements
 
 * Python 3.x >= 3.8
